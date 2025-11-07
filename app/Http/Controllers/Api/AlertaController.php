@@ -35,7 +35,7 @@ class AlertaController extends Controller
             'titulo' => 'required|string',
             'descripcion' => 'nullable|string',
             'nivel' => 'nullable|string',
-            'user_id' => 'required|exists:users,id',
+            'usuario_id' => 'required|exists:Usuarios,usuario_id',
         ]);
 
         $alerta = $this->service->save($data);

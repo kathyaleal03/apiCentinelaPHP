@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Reporte extends Model
 {
@@ -12,7 +13,7 @@ class Reporte extends Model
     protected $table = 'reportes';
 
     protected $fillable = [
-        'user_id',
+        'usuario_id',
         'tipo',
         'descripcion',
         'latitud',
@@ -23,7 +24,7 @@ class Reporte extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 
     public function foto()

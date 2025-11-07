@@ -31,7 +31,7 @@ class EmergenciaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'usuario_id' => 'required|exists:Usuarios,usuario_id',
             'mensaje' => 'required|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',

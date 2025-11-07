@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Comentario extends Model
 {
@@ -13,7 +14,7 @@ class Comentario extends Model
 
     protected $fillable = [
         'reporte_id',
-        'user_id',
+        'usuario_id',
         'mensaje',
     ];
 
@@ -24,6 +25,6 @@ class Comentario extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 }

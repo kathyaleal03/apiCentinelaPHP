@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -10,17 +10,17 @@ class UsuarioService
 {
     public function findAll()
     {
-        return User::all();
+        return Usuario::all();
     }
 
     public function findById($id)
     {
-        return User::find($id);
+        return Usuario::find($id);
     }
 
     public function findByCorreo($correo)
     {
-        return User::where('correo', $correo)
+        return Usuario::where('correo', $correo)
             ->orWhere('email', $correo)
             ->first();
     }
@@ -28,17 +28,18 @@ class UsuarioService
     protected function normalizeUserPayload(array $data): array
     {
         // map Java-style fields to Laravel default where reasonable
-        if (isset($data['contrasena'])) {
-            $data['password'] = $data['contrasena'];
-            unset($data['contrasena']);
+        // Normalize to the `Usuarios` table columns: nombre, correo, contrasena
+        if (isset($data['password'])) {
+            $data['contrasena'] = $data['password'];
+            unset($data['password']);
         }
-        if (isset($data['correo'])) {
-            $data['email'] = $data['correo'];
-            unset($data['correo']);
+        if (isset($data['email'])) {
+            $data['correo'] = $data['email'];
+            unset($data['email']);
         }
-        if (isset($data['nombre'])) {
-            $data['name'] = $data['nombre'];
-            unset($data['nombre']);
+        if (isset($data['name'])) {
+            $data['nombre'] = $data['name'];
+            unset($data['name']);
         }
         return $data;
     }
@@ -47,32 +48,32 @@ class UsuarioService
     {
         $data = $this->normalizeUserPayload($data);
 
-        if (isset($data['password'])) {
-            $pw = $data['password'];
+        if (isset($data['contrasena'])) {
+            $pw = $data['contrasena'];
             if (!Str::startsWith($pw, ['$2y$', '$2a$', '$2b$'])) {
-                $data['password'] = Hash::make($pw);
+                $data['contrasena'] = Hash::make($pw);
             }
         }
 
-        return User::create($data);
+        return Usuario::create($data);
     }
 
     public function deleteById($id)
     {
-        return User::destroy($id);
+        return Usuario::destroy($id);
     }
 
     public function update($id, array $data)
     {
-        $u = User::find($id);
+    $u = Usuario::find($id);
         if (!$u) return null;
 
         $data = $this->normalizeUserPayload($data);
 
-        if (isset($data['password'])) {
-            $pw = $data['password'];
+        if (isset($data['contrasena'])) {
+            $pw = $data['contrasena'];
             if (!Str::startsWith($pw, ['$2y$', '$2a$', '$2b$'])) {
-                $data['password'] = Hash::make($pw);
+                $data['contrasena'] = Hash::make($pw);
             }
         }
 
@@ -85,7 +86,7 @@ class UsuarioService
     {
         $u = $this->findByCorreo($correo);
         if (!$u) return null;
-        $stored = $u->password ?? null;
+        $stored = $u->contrasena ?? null;
         if (!$stored) return null;
 
         if (Str::startsWith($stored, ['$2y$', '$2a$', '$2b$'])) {
@@ -94,7 +95,7 @@ class UsuarioService
 
         // stored in plaintext (legacy): compare and upgrade
         if ($stored === $contrasena) {
-            $u->password = Hash::make($contrasena);
+            $u->contrasena = Hash::make($contrasena);
             $u->save();
             return $u;
         }

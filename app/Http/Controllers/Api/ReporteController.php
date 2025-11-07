@@ -30,7 +30,7 @@ class ReporteController extends Controller
     {
         // delegate to service which handles foto creation and usuario resolution
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'usuario_id' => 'required|exists:Usuarios,usuario_id',
             'tipo' => 'sometimes|string',
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',

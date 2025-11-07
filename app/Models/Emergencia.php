@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Emergencia extends Model
 {
@@ -12,7 +13,7 @@ class Emergencia extends Model
     protected $table = 'emergencias';
 
     protected $fillable = [
-        'user_id',
+        'usuario_id',
         'mensaje',
         'latitud',
         'longitud',
@@ -25,6 +26,6 @@ class Emergencia extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 }

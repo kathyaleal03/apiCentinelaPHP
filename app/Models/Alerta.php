@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Alerta extends Model
 {
@@ -16,7 +17,7 @@ class Alerta extends Model
         'titulo',
         'descripcion',
         'nivel',
-        'user_id',
+        'usuario_id',
     ];
 
     public function region()
@@ -26,6 +27,6 @@ class Alerta extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 }

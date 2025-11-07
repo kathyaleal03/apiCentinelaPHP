@@ -26,17 +26,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // API resource routes for the new models
-Route::apiResource('regiones', RegionController::class);
-Route::apiResource('fotos', FotoReporteController::class);
-Route::apiResource('reportes', ReporteController::class);
-Route::apiResource('alertas', AlertaController::class);
-Route::apiResource('comentarios', ComentarioController::class);
-Route::apiResource('emergencias', EmergenciaController::class);
+Route::apiResource('/regiones', RegionController::class);
+Route::apiResource('/fotos', FotoReporteController::class);
+Route::apiResource('/reportes', ReporteController::class);
+Route::apiResource('/alertas', AlertaController::class);
+Route::apiResource('/comentarios', ComentarioController::class);
+Route::apiResource('/emergencias', EmergenciaController::class);
 
 // User auth routes
-Route::prefix('usuarios')->group(function () {
-    Route::post('register', [UsuarioController::class, 'register']);
-    Route::post('login', [UsuarioController::class, 'login']);
-    Route::post('logout', [UsuarioController::class, 'logout'])->middleware('auth:sanctum');
-    Route::put('{id}/rol', [UsuarioController::class, 'updateRol'])->middleware('auth:sanctum');
+Route::prefix('/usuarios')->group(function () {
+    Route::post('/register', [UsuarioController::class, 'register']);
+    Route::post('/login', [UsuarioController::class, 'login']);
+    Route::post('/logout', [UsuarioController::class, 'logout'])->middleware('auth:sanctum');
+    Route::put('/rol/{id}', [UsuarioController::class, 'updateRol'])->middleware('auth:sanctum');
 });
+
+// Resource routes for usuarios (index, show, update, destroy)
+// `store` is handled by POST /api/usuarios/register to keep the Java-style payload naming
+Route::apiResource('/usuarios', UsuarioController::class)->except(['store', 'create', 'edit']);

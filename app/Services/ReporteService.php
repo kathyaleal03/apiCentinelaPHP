@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Reporte;
-use App\Models\User;
+use App\Models\Usuario;
 use App\Models\FotoReporte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -32,11 +32,11 @@ class ReporteService
     public function save(array $data)
     {
         // ensure usuario exists
-        if (empty($data['user_id'])) {
-            throw new \InvalidArgumentException('El reporte debe incluir user_id');
+        if (empty($data['usuario_id'])) {
+            throw new \InvalidArgumentException('El reporte debe incluir usuario_id');
         }
-        $u = User::find($data['user_id']);
-        if (!$u) throw new \InvalidArgumentException('Usuario no encontrado: ' . $data['user_id']);
+        $u = Usuario::find($data['usuario_id']);
+        if (!$u) throw new \InvalidArgumentException('Usuario no encontrado: ' . $data['usuario_id']);
 
         // handle foto
         if (!empty($data['foto']) && is_array($data['foto'])) {
@@ -52,7 +52,7 @@ class ReporteService
 
         // create
         $payload = [
-            'user_id' => $u->id,
+            'usuario_id' => $u->usuario_id,
             'tipo' => $data['tipo'] ?? null,
             'descripcion' => $data['descripcion'] ?? null,
             'latitud' => $data['latitud'] ?? null,
@@ -66,11 +66,11 @@ class ReporteService
 
     public function createFromRequest(Request $request)
     {
-        $data = $request->only(['user_id', 'tipo', 'descripcion', 'latitud', 'longitud', 'fotoUrl', 'foto_url', 'estado']);
+    $data = $request->only(['usuario_id','user_id', 'tipo', 'descripcion', 'latitud', 'longitud', 'fotoUrl', 'foto_url', 'estado']);
         // accept fotoUrl or foto_url
         $fotoUrl = $data['fotoUrl'] ?? $data['foto_url'] ?? null;
         $payload = [
-            'user_id' => $data['user_id'] ?? $request->input('usuario_id'),
+            'usuario_id' => $data['usuario_id'] ?? $data['user_id'] ?? $request->input('usuario_id'),
             'tipo' => $data['tipo'] ?? null,
             'descripcion' => $data['descripcion'] ?? null,
             'latitud' => $data['latitud'] ?? null,
@@ -96,9 +96,10 @@ class ReporteService
         $r = Reporte::find($id);
         if (!$r) return null;
 
-        if (isset($data['user_id'])) {
-            $u = User::find($data['user_id']);
-            if ($u) $r->user_id = $u->id;
+        if (isset($data['usuario_id']) || isset($data['user_id'])) {
+            $uid = $data['usuario_id'] ?? $data['user_id'];
+            $u = Usuario::find($uid);
+            if ($u) $r->usuario_id = $u->usuario_id;
         }
 
         if (isset($data['foto']) && is_array($data['foto'])) {

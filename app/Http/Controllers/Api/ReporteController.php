@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Reporte;
 use Illuminate\Http\Request;
+use App\Services\ReporteService;
 
 class ReporteController extends Controller
 {
+    protected $reporteService;
+
+    public function __construct(ReporteService $reporteService)
+    {
+        $this->reporteService = $reporteService;
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
+    }
     public function index()
     {
         return Reporte::with(['usuario', 'foto'])->get();
@@ -20,16 +28,18 @@ class ReporteController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        // delegate to service which handles foto creation and usuario resolution
+        $request->validate([
             'user_id' => 'required|exists:users,id',
-            'tipo' => 'required|string',
+            'tipo' => 'sometimes|string',
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
-            'foto_id' => 'nullable|exists:fotosreportes,id',
+            'fotoUrl' => 'nullable|url',
+            'foto_url' => 'nullable|url',
         ]);
 
-        $reporte = Reporte::create($data);
+        $reporte = $this->reporteService->createFromRequest($request);
         return response($reporte, 201);
     }
 
@@ -40,7 +50,8 @@ class ReporteController extends Controller
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
-            'foto_id' => 'nullable|exists:fotosreportes,id',
+            // fotosreportes uses foto_id as primary key in the DB
+            'foto_id' => 'nullable|exists:fotosreportes,foto_id',
             'estado' => 'nullable|string',
         ]);
 

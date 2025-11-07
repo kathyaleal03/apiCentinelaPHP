@@ -3,19 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Comentario;
+use App\Services\ComentarioService;
 use Illuminate\Http\Request;
 
 class ComentarioController extends Controller
 {
-    public function index()
+    protected $service;
+
+    public function __construct(ComentarioService $service)
     {
-        return Comentario::with(['reporte', 'usuario'])->get();
+        $this->service = $service;
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
-    public function show(Comentario $comentario)
+    public function index()
     {
-        return $comentario->load(['reporte', 'usuario']);
+        return response()->json($this->service->findAll(), 200);
+    }
+
+    public function show($id)
+    {
+        $c = $this->service->findById($id);
+        if (!$c) return response()->json(null, 404);
+        return response()->json($c, 200);
     }
 
     public function store(Request $request)
@@ -26,23 +36,26 @@ class ComentarioController extends Controller
             'mensaje' => 'required|string',
         ]);
 
-        $comentario = Comentario::create($data);
-        return response($comentario, 201);
+        $comentario = $this->service->save($data);
+        return response()->json($comentario, 201);
     }
 
-    public function update(Request $request, Comentario $comentario)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'mensaje' => 'required|string',
         ]);
 
-        $comentario->update($data);
-        return $comentario;
+        $updated = $this->service->update($id, $data);
+        if (!$updated) return response()->json(null, 404);
+        return response()->json($updated, 200);
     }
 
-    public function destroy(Comentario $comentario)
+    public function destroy($id)
     {
-        $comentario->delete();
-        return response(null, 204);
+        $exists = $this->service->findById($id);
+        if (!$exists) return response()->json(null, 404);
+        $this->service->deleteById($id);
+        return response()->json(null, 204);
     }
 }

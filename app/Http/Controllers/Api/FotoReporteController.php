@@ -3,19 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\FotoReporte;
+use App\Services\FotoReporteService;
 use Illuminate\Http\Request;
 
 class FotoReporteController extends Controller
 {
-    public function index()
+    protected $service;
+
+    public function __construct(FotoReporteService $service)
     {
-        return FotoReporte::all();
+        $this->service = $service;
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
-    public function show(FotoReporte $fotoreporte)
+    public function index()
     {
-        return $fotoreporte;
+        return response()->json($this->service->findAll(), 200);
+    }
+
+    public function show($id)
+    {
+        $f = $this->service->findById($id);
+        if (!$f) return response()->json(null, 404);
+        return response()->json($f, 200);
     }
 
     public function store(Request $request)
@@ -24,23 +34,26 @@ class FotoReporteController extends Controller
             'url_foto' => 'required|url',
         ]);
 
-        $foto = FotoReporte::create($data);
-        return response($foto, 201);
+        $foto = $this->service->save($data);
+        return response()->json($foto, 201);
     }
 
-    public function update(Request $request, FotoReporte $fotoreporte)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'url_foto' => 'required|url',
         ]);
 
-        $fotoreporte->update($data);
-        return $fotoreporte;
+        $updated = $this->service->update($id, $data);
+        if (!$updated) return response()->json(null, 404);
+        return response()->json($updated, 200);
     }
 
-    public function destroy(FotoReporte $fotoreporte)
+    public function destroy($id)
     {
-        $fotoreporte->delete();
-        return response(null, 204);
+        $exists = $this->service->findById($id);
+        if (!$exists) return response()->json(null, 404);
+        $this->service->deleteById($id);
+        return response()->json(null, 204);
     }
 }

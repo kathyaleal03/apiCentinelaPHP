@@ -3,19 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Region;
+use App\Services\RegionService;
 use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
-    public function index()
+    protected $service;
+
+    public function __construct(RegionService $service)
     {
-        return Region::all();
+        $this->service = $service;
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
-    public function show(Region $region)
+    public function index()
     {
-        return $region;
+        return response()->json($this->service->findAll(), 200);
+    }
+
+    public function show($id)
+    {
+        $r = $this->service->findById($id);
+        if (!$r) return response()->json(null, 404);
+        return response()->json($r, 200);
     }
 
     public function store(Request $request)
@@ -27,11 +37,11 @@ class RegionController extends Controller
             'longitud' => 'nullable|numeric',
         ]);
 
-        $region = Region::create($data);
+        $region = $this->service->save($data);
         return response($region, 201);
     }
 
-    public function update(Request $request, Region $region)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'nombre' => 'sometimes|required|string',
@@ -40,13 +50,16 @@ class RegionController extends Controller
             'longitud' => 'nullable|numeric',
         ]);
 
-        $region->update($data);
-        return $region;
+        $updated = $this->service->update($id, $data);
+        if (!$updated) return response()->json(null, 404);
+        return response()->json($updated, 200);
     }
 
-    public function destroy(Region $region)
+    public function destroy($id)
     {
-        $region->delete();
-        return response(null, 204);
+        $exists = $this->service->findById($id);
+        if (!$exists) return response()->json(null, 404);
+        $this->service->deleteById($id);
+        return response()->json(null, 204);
     }
 }

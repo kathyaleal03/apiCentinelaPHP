@@ -28,6 +28,7 @@ class Reporte extends Model
 
     public function foto()
     {
-        return $this->belongsTo(FotoReporte::class, 'foto_id');
+        // explicitly set ownerKey to match FotoReporte primary key
+        return $this->belongsTo(FotoReporte::class, 'foto_id', 'foto_id');
     }
 }

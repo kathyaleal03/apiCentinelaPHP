@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ReporteController;
 use App\Http\Controllers\Api\AlertaController;
 use App\Http\Controllers\Api\ComentarioController;
 use App\Http\Controllers\Api\EmergenciaController;
+use App\Http\Controllers\Api\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,3 +32,11 @@ Route::apiResource('reportes', ReporteController::class);
 Route::apiResource('alertas', AlertaController::class);
 Route::apiResource('comentarios', ComentarioController::class);
 Route::apiResource('emergencias', EmergenciaController::class);
+
+// User auth routes
+Route::prefix('usuarios')->group(function () {
+    Route::post('register', [UsuarioController::class, 'register']);
+    Route::post('login', [UsuarioController::class, 'login']);
+    Route::post('logout', [UsuarioController::class, 'logout'])->middleware('auth:sanctum');
+    Route::put('{id}/rol', [UsuarioController::class, 'updateRol'])->middleware('auth:sanctum');
+});

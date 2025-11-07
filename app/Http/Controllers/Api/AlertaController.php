@@ -3,19 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Alerta;
+use App\Services\AlertaService;
 use Illuminate\Http\Request;
 
 class AlertaController extends Controller
 {
-    public function index()
+    protected $service;
+
+    public function __construct(AlertaService $service)
     {
-        return Alerta::with(['region', 'usuario'])->get();
+        $this->service = $service;
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
-    public function show(Alerta $alerta)
+    public function index()
     {
-        return $alerta->load(['region', 'usuario']);
+        return response()->json($this->service->findAll(), 200);
+    }
+
+    public function show($id)
+    {
+        $a = $this->service->findById($id);
+        if (!$a) return response()->json(null, 404);
+        return response()->json($a, 200);
     }
 
     public function store(Request $request)
@@ -28,11 +38,11 @@ class AlertaController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $alerta = Alerta::create($data);
-        return response($alerta, 201);
+        $alerta = $this->service->save($data);
+        return response()->json($alerta, 201);
     }
 
-    public function update(Request $request, Alerta $alerta)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'region_id' => 'nullable|exists:regiones,id',
@@ -41,13 +51,16 @@ class AlertaController extends Controller
             'nivel' => 'nullable|string',
         ]);
 
-        $alerta->update($data);
-        return $alerta;
+        $updated = $this->service->update($id, $data);
+        if (!$updated) return response()->json(null, 404);
+        return response()->json($updated, 200);
     }
 
-    public function destroy(Alerta $alerta)
+    public function destroy($id)
     {
-        $alerta->delete();
-        return response(null, 204);
+        $exists = $this->service->findById($id);
+        if (!$exists) return response()->json(null, 404);
+        $this->service->deleteById($id);
+        return response()->json(null, 204);
     }
 }

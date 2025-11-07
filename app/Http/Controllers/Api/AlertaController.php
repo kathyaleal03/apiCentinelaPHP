@@ -21,6 +21,12 @@ class AlertaController extends Controller
         return response()->json($this->service->findAll(), 200);
     }
 
+    
+    public function getAllAlert()
+    {
+        return response()->json($this->service->findAll(), 200);
+    }
+
     public function show($id)
     {
         $a = $this->service->findById($id);

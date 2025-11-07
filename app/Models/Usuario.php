@@ -11,6 +11,7 @@ class Usuario extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public $timestamps = false;
     protected $table = 'Usuarios';
     protected $primaryKey = 'usuario_id';
     public $incrementing = true;
@@ -24,7 +25,7 @@ class Usuario extends Authenticatable
         'departamento',
         'ciudad',
         'region',
-        'rol',
+        'rol' 
     ];
 
     protected $hidden = [

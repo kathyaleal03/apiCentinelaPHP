@@ -29,7 +29,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('/regiones', RegionController::class);
 Route::apiResource('/fotos', FotoReporteController::class);
 Route::apiResource('/reportes', ReporteController::class);
+
+Route::get('/alertas/getAllAlert', [AlertaController::class, 'getAllAlert']);
 Route::apiResource('/alertas', AlertaController::class);
+
+
 Route::apiResource('/comentarios', ComentarioController::class);
 Route::apiResource('/emergencias', EmergenciaController::class);
 

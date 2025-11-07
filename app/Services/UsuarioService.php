@@ -20,26 +20,25 @@ class UsuarioService
 
     public function findByCorreo($correo)
     {
-        return Usuario::where('correo', $correo)
-            ->orWhere('email', $correo)
-            ->first();
+        // The application uses the `correo` column for user lookup in the `Usuarios` table.
+        return Usuario::where('correo', $correo)->first();
     }
 
     protected function normalizeUserPayload(array $data): array
     {
         // map Java-style fields to Laravel default where reasonable
         // Normalize to the `Usuarios` table columns: nombre, correo, contrasena
-        if (isset($data['password'])) {
-            $data['contrasena'] = $data['password'];
+        if (isset($data['contrasena'])) {
+            $data['contraseña'] = $data['contrasena'];
             unset($data['password']);
         }
-        if (isset($data['email'])) {
-            $data['correo'] = $data['email'];
-            unset($data['email']);
+        if (isset($data['correo'])) {
+            $data['correo'] = $data['correo'];
+            unset($data['correo']);
         }
-        if (isset($data['name'])) {
-            $data['nombre'] = $data['name'];
-            unset($data['name']);
+        if (isset($data['nombre'])) {
+            $data['nombre'] = $data['nombre'];
+            unset($data['nombre']);
         }
         return $data;
     }

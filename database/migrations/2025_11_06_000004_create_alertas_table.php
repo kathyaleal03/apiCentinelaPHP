@@ -8,15 +8,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('alertas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('region_id')->nullable()->constrained('regiones')->nullOnDelete();
-            $table->string('titulo');
-            $table->text('descripcion')->nullable();
-            $table->string('nivel')->default('Verde');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('alertas')) {
+            Schema::create('alertas', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('region_id')->nullable()->constrained('regiones')->nullOnDelete();
+                $table->string('titulo');
+                $table->text('descripcion')->nullable();
+                $table->string('nivel')->default('Verde');
+                $table->foreignId('usuario_id')->constrained('Usuarios', 'usuario_id')->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

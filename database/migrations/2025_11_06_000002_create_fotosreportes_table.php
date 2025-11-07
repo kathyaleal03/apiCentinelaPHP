@@ -8,11 +8,13 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('fotosreportes', function (Blueprint $table) {
-            $table->id();
-            $table->string('url_foto');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('fotosreportes')) {
+            Schema::create('fotosreportes', function (Blueprint $table) {
+                $table->id();
+                $table->string('url_foto');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

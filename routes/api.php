@@ -31,6 +31,8 @@ Route::apiResource('/fotos', FotoReporteController::class);
 Route::apiResource('/reportes', ReporteController::class);
 
 Route::get('/alertas/getAllAlert', [AlertaController::class, 'getAllAlert']);
+// Keep compatibility with frontend calling POST /api/alertas/createAlert
+Route::post('/alertas/createAlert', [AlertaController::class, 'store']);
 Route::apiResource('/alertas', AlertaController::class);
 
 

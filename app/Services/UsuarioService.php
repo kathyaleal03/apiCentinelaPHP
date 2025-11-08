@@ -20,14 +20,13 @@ class UsuarioService
 
     public function findByCorreo($correo)
     {
-        // The application uses the `correo` column for user lookup in the `Usuarios` table.
+        
         return Usuario::where('correo', $correo)->first();
     }
 
     protected function normalizeUserPayload(array $data): array
     {
-        // map Java-style fields to Laravel default where reasonable
-        // Normalize to the `Usuarios` table columns: nombre, correo, contrasena
+        
         if (isset($data['contrasena'])) {
             $data['contraseña'] = $data['contrasena'];
             unset($data['password']);

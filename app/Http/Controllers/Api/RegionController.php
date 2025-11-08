@@ -13,13 +13,15 @@ class RegionController extends Controller
     public function __construct(RegionService $service)
     {
         $this->service = $service;
-        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
+        // $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
     public function index()
     {
         return response()->json($this->service->findAll(), 200);
     }
+
+  
 
     public function show($id)
     {

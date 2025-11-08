@@ -31,26 +31,25 @@ class ReporteService
 
     public function save(array $data)
     {
-        // ensure usuario exists
+        
         if (empty($data['usuario_id'])) {
             throw new \InvalidArgumentException('El reporte debe incluir usuario_id');
         }
         $u = Usuario::find($data['usuario_id']);
         if (!$u) throw new \InvalidArgumentException('Usuario no encontrado: ' . $data['usuario_id']);
 
-        // handle foto
         if (!empty($data['foto']) && is_array($data['foto'])) {
             $foto = $data['foto'];
             if (empty($foto['fotoId']) && !empty($foto['url_foto'])) {
                 $saved = $this->fotoService->save(['url_foto' => $foto['url_foto']]);
-                // use the model's primary key (works whether it's `id` or `foto_id`)
+                
                 $data['foto_id'] = $saved->getKey();
             } elseif (!empty($foto['fotoId'])) {
                 $data['foto_id'] = $foto['fotoId'];
             }
         }
 
-        // create
+        
         $payload = [
             'usuario_id' => $u->usuario_id,
             'tipo' => $data['tipo'] ?? null,
@@ -67,7 +66,7 @@ class ReporteService
     public function createFromRequest(Request $request)
     {
     $data = $request->only(['usuario_id','user_id', 'tipo', 'descripcion', 'latitud', 'longitud', 'fotoUrl', 'foto_url', 'estado']);
-        // accept fotoUrl or foto_url
+        
         $fotoUrl = $data['fotoUrl'] ?? $data['foto_url'] ?? null;
         $payload = [
             'usuario_id' => $data['usuario_id'] ?? $data['user_id'] ?? $request->input('usuario_id'),

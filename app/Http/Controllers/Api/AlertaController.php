@@ -3,70 +3,144 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Alerta;
 use App\Services\AlertaService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator; // Importar el validador
+use Illuminate\Validation\Rule;
 
 class AlertaController extends Controller
 {
-    protected $service;
 
+    protected $alertaService;
+
+    // Inyectar el servicio
     public function __construct(AlertaService $service)
     {
-        $this->service = $service;
-        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
+        $this->alertaService = $service;
     }
 
-    public function index()
-    {
-        return response()->json($this->service->findAll(), 200);
-    }
-
-    
     public function getAllAlert()
     {
-        return response()->json($this->service->findAll(), 200);
+        // El servicio ya se encarga de 'findAll'
+        return response()->json($this->alertaService->findAll(), 200);
     }
 
-    public function show($id)
+    public function getAlertaById($id)
     {
-        $a = $this->service->findById($id);
-        if (!$a) return response()->json(null, 404);
-        return response()->json($a, 200);
+        $alerta = $this->alertaService->findById($id);
+        if (!$alerta) {
+            return response()->json(null, 404);
+        }
+        return response()->json($alerta, 200);
     }
 
-    public function store(Request $request)
+
+    public function createAlerta(Request $request)
     {
-        $data = $request->validate([
-            'region_id' => 'nullable|exists:regiones,id',
-            'titulo' => 'required|string',
-            'descripcion' => 'nullable|string',
-            'nivel' => 'nullable|string',
-            'usuario_id' => 'required|exists:Usuarios,usuario_id',
+       
+        $validator = Validator::make($request->all(), [
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'nivel' => 'required|string',
+            
+           
+            'region' => 'present|nullable|array', 
+            'region.regionId' => 'nullable|integer|exists:regions,region_id', 
+            
+           
+            'usuario' => 'required|array',
+            'usuario.usuarioId' => 'required|integer|exists:users,id' 
         ]);
 
-        $alerta = $this->service->save($data);
-        return response()->json($alerta, 201);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $validatedData = $validator->validated();
+
+     
+        $alertaDataParaServicio = [
+            'titulo' => $validatedData['titulo'],
+            'descripcion' => $validatedData['descripcion'],
+            'nivel' => $validatedData['nivel'],
+            
+            
+            'id_usuario' => $validatedData['usuario']['usuarioId'],
+           
+            'region_id' => $validatedData['region']['regionId'] ?? null
+        ];
+
+       
+        $nuevo = $this->alertaService->save($alertaDataParaServicio);
+
+        return response()->json($nuevo, 201);
     }
 
-    public function update(Request $request, $id)
+
+    public function updateAlerta(Request $request, $id)
     {
-        $data = $request->validate([
-            'region_id' => 'nullable|exists:regiones,id',
-            'titulo' => 'sometimes|required|string',
-            'descripcion' => 'nullable|string',
-            'nivel' => 'nullable|string',
+       
+         $validator = Validator::make($request->all(), [
+            'titulo' => 'sometimes|required|string|max:255',
+            'descripcion' => 'sometimes|required|string',
+            'nivel' => 'sometimes|required|string',
+
+           
+            'region' => 'sometimes|present|nullable|array',
+            'region.regionId' => 'nullable|integer|exists:regions,region_id',
+
+            
+            'usuario' => 'sometimes|required|array',
+            'usuario.usuarioId' => 'required|integer|exists:users,id'
         ]);
 
-        $updated = $this->service->update($id, $data);
-        if (!$updated) return response()->json(null, 404);
-        return response()->json($updated, 200);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $validatedData = $validator->validated();
+
+       
+        $alertaDataParaServicio = [];
+
+       
+        if (isset($validatedData['titulo'])) {
+            $alertaDataParaServicio['titulo'] = $validatedData['titulo'];
+        }
+        if (isset($validatedData['descripcion'])) {
+            $alertaDataParaServicio['descripcion'] = $validatedData['descripcion'];
+        }
+        if (isset($validatedData['nivel'])) {
+            $alertaDataParaServicio['nivel'] = $validatedData['nivel'];
+        }
+
+       
+        if (isset($validatedData['usuario'])) {
+            $alertaDataParaServicio['id_usuario'] = $validatedData['usuario']['usuarioId'];
+        }
+
+       
+        if (isset($validatedData['region'])) {
+            $alertaDataParaServicio['region_id'] = $validatedData['region']['regionId'] ?? null;
+        }
+
+        
+        $actualizado = $this->alertaService->update($id, $alertaDataParaServicio);
+
+        if ($actualizado) {
+            return response()->json($actualizado, 200);
+        } else {
+            return response()->json(null, 404);
+        }
     }
 
-    public function destroy($id)
+    public function deleteAlerta($id)
     {
-        $exists = $this->service->findById($id);
-        if (!$exists) return response()->json(null, 404);
-        $this->service->deleteById($id);
-        return response()->json(null, 204);
+        if ($this->alertaService->findById($id) == null) {
+            return response()->json(null, 404);
+        }
+        $this->alertaService->deleteById($id);
+        return response()->json(null, 204); // 204 No Content
     }
 }

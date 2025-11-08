@@ -2,26 +2,21 @@
 
 namespace App\Models;
 
+use App\Enums\NivelAlerta; // Importamos el Enum
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Usuario;
-use App\Models\Region; // Asegúrate de importar Region
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Alerta extends Model
 {
     use HasFactory;
 
-    /**
-     * CORRECCIÓN 1:
-     * El nombre de la tabla en tu base de datos (MySQL) es 'Alertas' (con mayúscula).
-     */
+   
     protected $table = 'alertas';
 
     protected $primaryKey = 'alerta_id';
 
-  
     public $timestamps = false;
-
 
     protected $fillable = [
         'region_id',
@@ -31,15 +26,21 @@ class Alerta extends Model
         'id_usuario', 
     ];
 
- 
-    public function region()
+
+    protected $casts = [
+        'nivel' => 'string', 
+    ];
+
+   
+    public function region(): BelongsTo
     {
+        
         return $this->belongsTo(Region::class, 'region_id', 'region_id');
     }
 
-    public function usuario()
+   
+    public function usuario(): BelongsTo
     {
-       
-        return $this->belongsTo(Usuario::class, 'id_usuario', 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 }

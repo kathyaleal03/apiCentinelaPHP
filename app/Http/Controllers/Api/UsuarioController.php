@@ -83,13 +83,16 @@ class UsuarioController extends Controller
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
-    $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
+        $user->makeHidden(['contrasena']);
 
-    $user->makeHidden(['contrasena']);
-
-        
-    return response()->json(['user' => $user, 'usuarioId' => $user->usuario_id, 'token' => $token], 200);
+        return response()->json([
+            'user' => $user,
+            'usuarioId' => $user->usuario_id,
+            'rol' => $user->rol,
+            'token' => $token
+        ], 200);
     }
 
     public function logout(Request $request)

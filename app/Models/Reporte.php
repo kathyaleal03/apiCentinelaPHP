@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
+use App\Models\FotoReporte;
 
 class Reporte extends Model
 {
@@ -30,7 +31,7 @@ class Reporte extends Model
 
     public function foto()
     {
-        // explicitly set ownerKey to match FotoReporte primary key
+        
         return $this->belongsTo(FotoReporte::class, 'foto_id', 'foto_id');
     }
 }

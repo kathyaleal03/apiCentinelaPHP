@@ -12,8 +12,7 @@ class FotoReporte extends Model
     protected $table = 'fotosreportes';
     public $timestamps = false;
 
-    // The existing database uses `foto_id` as primary key in some setups.
-    // Set the primary key explicitly so eager loading uses the correct column.
+
     protected $primaryKey = 'foto_id';
     public $incrementing = true;
     protected $keyType = 'int';

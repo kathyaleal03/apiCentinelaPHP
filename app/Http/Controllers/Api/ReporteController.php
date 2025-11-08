@@ -42,55 +42,50 @@ class ReporteController extends Controller
         // 1. Validar todos los datos de entrada
         // MODIFICADO: para aceptar 'usuario.usuarioId' y 'estado'
         $validatedData = $request->validate([
-            // Validamos la nueva estructura del payload
+           
             'usuario' => 'required|array',
-            'usuario.usuarioId' => 'required|exists:Usuarios,usuario_id', // Validamos el ID anidado
+            'usuario.usuarioId' => 'required|exists:Usuarios,usuario_id',
             
             'tipo' => 'sometimes|string',
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
             'fotoUrl' => 'nullable|url',
-            'foto_url' => 'nullable|string', // Aceptamos ambos por si acaso
-            'estado' => 'sometimes|string', // Aceptamos el estado del frontend
+            'foto_url' => 'nullable|string', 
+            'estado' => 'sometimes|string', 
         ]);
 
         $fotoId = null;
-        // Unificar la URL de la foto (priorizando fotoUrl)
+        
         $fotoUrl = $request->input('fotoUrl', $request->input('foto_url'));
 
-        // 2. Lógica para guardar la foto PRIMERO
+        
         if (!empty($fotoUrl)) {
-            // Creamos el registro en la tabla de fotos
+            
             $nuevaFoto = FotoReporte::create([
                 'url' => $fotoUrl,
-                // 'otra_columna' => 'otro_valor' // ... si tienes más columnas
+               
             ]);
             
-            // 3. Extraemos el ID de la foto recién creada
-            // (ASUNCIÓN: tu PK se llama foto_id y está en $fillable de FotoReporte)
+   
             $fotoId = $nuevaFoto->foto_id; 
         }
 
-        // 4. Crear el Reporte usando el ID de la foto
-        
-        // Preparamos los datos para el reporte
-        // MODIFICADO: extraemos el usuarioId de la nueva estructura
+
         $reporteData = [
-            'usuario_id' => $request->input('usuario.usuarioId'), // <-- Extraído del objeto anidado
+            'usuario_id' => $request->input('usuario.usuarioId'), 
             'tipo' => $request->input('tipo') ?? null,
             'descripcion' => $request->input('descripcion') ?? null,
             'latitud' => $request->input('latitud') ?? null,
             'longitud' => $request->input('longitud') ?? null,
-            'foto_id' => $fotoId, // <--- ¡AQUÍ ESTÁ! Usamos el ID extraído
-            'estado' => $request->input('estado', 'Pendiente'), // <-- Usamos el estado del front o 'Pendiente'
+            'foto_id' => $fotoId, 
+            'estado' => $request->input('estado', 'Pendiente'), 
         ];
 
-        // 5. Creamos el reporte
-        // (ASUNCIÓN: todos los campos de $reporteData están en $fillable de Reporte)
+        
         $reporte = Reporte::create($reporteData);
 
-        // Cargamos las relaciones para devolver el objeto completo
+        
         $reporte->load(['usuario', 'foto']);
 
         return response($reporte, 201);
@@ -106,7 +101,7 @@ class ReporteController extends Controller
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
-            // fotosreportes uses foto_id as primary key in the DB
+            
             'foto_id' => 'nullable|exists:fotosreportes,foto_id',
             'estado' => 'nullable|string',
         ]);

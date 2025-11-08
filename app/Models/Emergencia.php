@@ -11,6 +11,7 @@ class Emergencia extends Model
     use HasFactory;
 
     protected $table = 'emergencias';
+    protected $primaryKey = 'emergencia_id';
     public $timestamps = false;
 
     protected $fillable = [

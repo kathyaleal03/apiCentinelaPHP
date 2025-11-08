@@ -25,13 +25,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// API resource routes for the new models
+
 Route::apiResource('/regiones', RegionController::class);
 Route::apiResource('/fotos', FotoReporteController::class);
 Route::apiResource('/reportes', ReporteController::class);
 
 Route::get('/alertas/getAllAlert', [AlertaController::class, 'getAllAlert']);
-// Keep compatibility with frontend calling POST /api/alertas/createAlert
+
 Route::post('/alertas/createAlert', [AlertaController::class, 'createAlerta']);
 Route::apiResource('/alertas', AlertaController::class);
 

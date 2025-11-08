@@ -57,16 +57,24 @@ class EmergenciaController extends Controller
 
     public function update(Request $request, $id)
     {
-        
+        // Usamos 'sometimes' para validar los campos solo si vienen en la petición.
+        // Esto permite que el frontend envíe solo {'atendido': true} sin
+        // que fallen las validaciones de los otros campos.
         $data = $request->validate([
-            'mensaje' => 'sometimes|required|string',
-            'latitud' => 'nullable|numeric',
-            'longitud' => 'nullable|numeric',
-            'atendido' => 'nullable|boolean',
+            'mensaje' => 'sometimes|required|string',       // Si se envía 'mensaje', debe existir y ser string
+            'latitud' => 'sometimes|numeric|nullable',    // Si se envía 'latitud', debe ser numérico o nulo
+            'longitud' => 'sometimes|numeric|nullable',   // Si se envía 'longitud', debe ser numérico o nulo
+            'atendido' => 'sometimes|boolean',          // Si se envía 'atendido', debe ser booleano
         ]);
 
+        // $data solo contendrá los campos que pasaron la validación (ej. ['atendido' => true])
         $updated = $this->service->update($id, $data);
-        if (!$updated) return response()->json(null, 404);
+
+        if (!$updated) {
+            return response()->json(['message' => 'Emergencia no encontrada.'], 404);
+        }
+        
+        // Devolvemos el recurso actualizado
         return response()->json($updated, 200);
     }
 

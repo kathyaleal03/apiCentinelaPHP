@@ -26,9 +26,9 @@ class EmergenciaService
         return Emergencia::destroy($id);
     }
 
-    public function update($id, array $data)
+    public function update($emergencia_id, array $data)
     {
-        $e = Emergencia::find($id);
+        $e = Emergencia::find($emergencia_id);
         if (!$e) return null;
         $e->fill($data);
         $e->save();

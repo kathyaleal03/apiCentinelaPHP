@@ -3,128 +3,65 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\ReporteService;
-use App\Services\FotoReporteService; // 1. Importamos el servicio de fotos
+use App\Models\Reporte;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Services\ReporteService;
 
 class ReporteController extends Controller
 {
     protected $reporteService;
-    protected $fotoService; // 2. Definimos el servicio de fotos
 
-    public function __construct(ReporteService $reporteService, FotoReporteService $fotoService)
+    public function __construct(ReporteService $reporteService)
     {
         $this->reporteService = $reporteService;
-        $this->fotoService = $fotoService; // 3. Inyectamos el servicio de fotos
-
-        
+        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
-
     public function index()
     {
-        return response()->json($this->reporteService->findAll(), 200);
+        return Reporte::with(['usuario', 'foto'])->get();
     }
 
-    public function show($id)
+    public function show(Reporte $reporte)
     {
-        $reporte = $this->reporteService->findById($id);
-        if (!$reporte) return response()->json(null, 404);
-        return response()->json($reporte, 200);
+        return $reporte->load(['usuario', 'foto']);
     }
 
-    /**
-     * Almacena un nuevo reporte desde la vista de React.
-     */
     public function store(Request $request)
     {
-        // 1. Validar la estructura exacta que envía React
-        $data = $request->validate([
-            'usuario.usuarioId' => 'required|exists:Usuarios,usuario_id',
-            'tipo' => 'required|string|max:255',
+        // delegate to service which handles foto creation and usuario resolution
+        $request->validate([
+            'usuario_id' => 'required|exists:Usuarios,usuario_id',
+            'tipo' => 'sometimes|string',
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
-            'estado' => 'nullable|string|max:100',
             'fotoUrl' => 'nullable|url',
+            'foto_url' => 'nullable|url',
         ]);
 
-        // 2. "Aplanar" los datos para el servicio
-        // (Similar a lo que hicimos en EmergenciaController)
-        $flatData = [
-            'usuario_id' => $data['usuario']['usuarioId'],
-            'tipo' => $data['tipo'],
-            'descripcion' => $data['descripcion'] ?? null,
-            'latitud' => $data['latitud'] ?? null,
-            'longitud' => $data['longitud'] ?? null,
-            'estado' => $data['estado'] ?? 'Activo',
-        ];
-
-        try {
-            // 3. Manejar la 'fotoUrl' (lógica extraída de tu ReporteService->createFromRequest)
-            if (!empty($data['fotoUrl'])) {
-                // Usamos el servicio de fotos para crear la foto y obtener su ID
-                $foto = $this->fotoService->save(['url_foto' => $data['fotoUrl']]);
-                $flatData['foto_id'] = $foto->getKey();
-            }
-
-            // 4. Guardar el reporte usando el payload aplanado
-            $reporte = $this->reporteService->save($flatData);
-            
-            // Recargamos la relación para devolver el objeto completo
-            $reporte->load(['usuario', 'foto']);
-
-            return response()->json($reporte, 201);
-
-        } catch (\InvalidArgumentException $e) {
-            // Captura errores como "Usuario no encontrado"
-            return response()->json(['message' => $e->getMessage()], 400);
-        } catch (\Exception $e) {
-            Log::error('Error al crear reporte: ' . $e->getMessage());
-            return response()->json(['message' => 'Error interno al crear el reporte.'], 500);
-        }
+        $reporte = $this->reporteService->createFromRequest($request);
+        return response($reporte, 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Reporte $reporte)
     {
-       
-        
         $data = $request->validate([
-            'usuario.usuarioId' => 'sometimes|required|exists:Usuarios,usuario_id',
-            'tipo' => 'sometimes|required|string|max:255',
+            'tipo' => 'sometimes|required|string',
             'descripcion' => 'nullable|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
-            'estado' => 'nullable|string|max:100',
-            'fotoUrl' => 'nullable|url',
+            // fotosreportes uses foto_id as primary key in the DB
+            'foto_id' => 'nullable|exists:fotosreportes,foto_id',
+            'estado' => 'nullable|string',
         ]);
 
-        // Aplanamos la data para el método update del servicio
-        $flatData = $data;
-        if (isset($data['usuario']['usuarioId'])) {
-            $flatData['usuario_id'] = $data['usuario']['usuarioId'];
-            unset($flatData['usuario']);
-        }
-
-        // Manejamos la foto
-        if (isset($data['fotoUrl'])) {
-            $foto = $this->fotoService->save(['url_foto' => $data['fotoUrl']]);
-            $flatData['foto_id'] = $foto->getKey();
-            unset($flatData['fotoUrl']); // El servicio no espera fotoUrl
-        }
-        
-        $reporte = $this->reporteService->update($id, $flatData);
-        if (!$reporte) return response()->json(null, 404);
-        
-        $reporte->load(['usuario', 'foto']);
-        return response()->json($reporte, 200);
+        $reporte->update($data);
+        return $reporte;
     }
 
-    public function destroy($id)
+    public function destroy(Reporte $reporte)
     {
-        $exists = $this->reporteService->findById($id);
-        if (!$exists) return response()->json(null, 404);
-        $this->reporteService->deleteById($id);
-        return response()->json(null, 204);
+        $reporte->delete();
+        return response(null, 204);
     }
 }

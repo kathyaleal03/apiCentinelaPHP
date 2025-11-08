@@ -11,6 +11,7 @@ class Reporte extends Model
     use HasFactory;
 
     protected $table = 'reportes';
+    public $timestamps = false;
 
     protected $fillable = [
         'usuario_id',

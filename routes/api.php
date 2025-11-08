@@ -32,7 +32,7 @@ Route::apiResource('/reportes', ReporteController::class);
 
 Route::get('/alertas/getAllAlert', [AlertaController::class, 'getAllAlert']);
 // Keep compatibility with frontend calling POST /api/alertas/createAlert
-Route::post('/alertas/createAlert', [AlertaController::class, 'store']);
+Route::post('/alertas/createAlert', [AlertaController::class, 'createAlerta']);
 Route::apiResource('/alertas', AlertaController::class);
 
 

@@ -91,7 +91,7 @@ class UsuarioService
             return Hash::check($contrasena, $stored) ? $u : null;
         }
 
-        // stored in plaintext (legacy): compare and upgrade
+        
         if ($stored === $contrasena) {
             $u->contrasena = Hash::make($contrasena);
             $u->save();

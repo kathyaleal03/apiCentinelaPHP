@@ -11,16 +11,17 @@ class Comentario extends Model
     use HasFactory;
 
     protected $table = 'comentarios';
-
+    public $timestamps = false;
     protected $fillable = [
         'reporte_id',
         'usuario_id',
         'mensaje',
+        'fecha',
     ];
 
     public function reporte()
     {
-        return $this->belongsTo(Reporte::class, 'reporte_id');
+        return $this->belongsTo(Reporte::class, 'reporte_id', 'reporte_id');
     }
 
     public function usuario()

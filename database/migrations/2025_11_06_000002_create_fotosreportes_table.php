@@ -12,7 +12,7 @@ return new class extends Migration
             Schema::create('fotosreportes', function (Blueprint $table) {
                 $table->id();
                 $table->string('url_foto');
-                $table->timestamps();
+
             });
         }
     }

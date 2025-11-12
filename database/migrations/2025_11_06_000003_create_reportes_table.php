@@ -19,7 +19,7 @@ return new class extends Migration
                 $table->double('longitud', 10, 6)->nullable();
                 $table->foreignId('foto_id')->nullable()->constrained('fotosreportes');
                 $table->string('estado')->default('Activo');
-                $table->timestamps();
+
             });
         }
     }

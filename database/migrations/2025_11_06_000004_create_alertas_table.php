@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->text('descripcion')->nullable();
                 $table->string('nivel')->default('Verde');
                 $table->foreignId('usuario_id')->constrained('Usuarios', 'usuario_id')->onDelete('cascade');
-                $table->timestamps();
+
             });
         }
     }

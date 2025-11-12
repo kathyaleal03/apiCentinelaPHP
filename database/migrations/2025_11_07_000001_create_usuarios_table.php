@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('ciudad')->nullable();
             $table->string('region')->nullable();
             $table->string('rol')->default('usuario');
-            $table->timestamps();
         });
     }
 

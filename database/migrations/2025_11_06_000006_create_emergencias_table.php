@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->double('latitud', 10, 6)->nullable();
                 $table->double('longitud', 10, 6)->nullable();
                 $table->boolean('atendido')->default(false);
-                $table->timestamps();
+
             });
         }
     }

@@ -38,6 +38,13 @@ Route::apiResource('/alertas', AlertaController::class);
 
 
 Route::apiResource('/comentarios', ComentarioController::class);
+// Estadísticas
+Route::get('/estadisticas/tipos', [\App\Http\Controllers\EstadisticasController::class, 'tipos']);
+Route::get('/estadisticas/estados', [\App\Http\Controllers\EstadisticasController::class, 'estados']);
+Route::get('/estadisticas/regiones', [\App\Http\Controllers\EstadisticasController::class, 'regiones']);
+Route::get('/estadisticas/heatmap', [\App\Http\Controllers\EstadisticasController::class, 'heatmap']);
+Route::get('/estadisticas/niveles-alerta', [\App\Http\Controllers\EstadisticasController::class, 'nivelesAlerta']);
+Route::get('/estadisticas/emergencias-atendidas', [\App\Http\Controllers\EstadisticasController::class, 'emergenciasAtendidas']);
 Route::apiResource('/emergencias', EmergenciaController::class);
 
 // User auth routes

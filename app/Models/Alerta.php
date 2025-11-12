@@ -41,6 +41,6 @@ class Alerta extends Model
    
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'usuario_id');
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AlertaController;
 use App\Http\Controllers\Api\ComentarioController;
 use App\Http\Controllers\Api\EmergenciaController;
 use App\Http\Controllers\Api\UsuarioController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +42,7 @@ Route::apiResource('/emergencias', EmergenciaController::class);
 
 // User auth routes
 Route::prefix('/usuarios')->group(function () {
-    Route::post('/register', [UsuarioController::class, 'register']);
+    Route::post('/createUser', [UsuarioController::class, 'register']);
     Route::post('/login', [UsuarioController::class, 'login']);
     Route::post('/logout', [UsuarioController::class, 'logout'])->middleware('auth:sanctum');
     Route::put('/rol/{id}', [UsuarioController::class, 'updateRol'])->middleware('auth:sanctum');

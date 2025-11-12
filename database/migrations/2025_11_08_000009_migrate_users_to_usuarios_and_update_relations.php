@@ -64,39 +64,7 @@ return new class extends Migration
         }
 
         // 4) Create foreign key constraints and drop old user_id columns
-        Schema::table('reportes', function (Blueprint $table) {
-            // add FK to Usuarios.usuario_id
-            $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('set null');
-            if (Schema::hasColumn('reportes', 'user_id')) {
-                // keep user_id for rollback safety but drop constraint if exists
-                try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
-                $table->dropColumn('user_id');
-            }
-        });
 
-        Schema::table('alertas', function (Blueprint $table) {
-            $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('set null');
-            if (Schema::hasColumn('alertas', 'user_id')) {
-                try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
-                $table->dropColumn('user_id');
-            }
-        });
-
-        Schema::table('comentarios', function (Blueprint $table) {
-            $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('set null');
-            if (Schema::hasColumn('comentarios', 'user_id')) {
-                try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
-                $table->dropColumn('user_id');
-            }
-        });
-
-        Schema::table('emergencias', function (Blueprint $table) {
-            $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('set null');
-            if (Schema::hasColumn('emergencias', 'user_id')) {
-                try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
-                $table->dropColumn('user_id');
-            }
-        });
     }
 
     public function down()

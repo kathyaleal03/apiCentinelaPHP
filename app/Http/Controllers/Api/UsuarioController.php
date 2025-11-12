@@ -28,47 +28,45 @@ class UsuarioController extends Controller
     }
 
     public function register(Request $request)
-{
+    {
 
-    $data = $request->validate([
-        'nombre' => 'required|string|max:255',
-        'correo' => 'required|email|unique:usuarios,correo', 
-        'contrasena' => 'required|string', 
-        
-        'telefono' => 'nullable|string', 
-        'departamento' => 'nullable|string', 
-        'ciudad' => 'nullable|string', 
-        'region' => 'nullable|integer', 
-    ]);
+        try {
 
+            $data = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'correo' => 'required|email|unique:usuarios,correo', 
+                'contrasena' => 'required|string', 
+                'telefono' => 'nullable|string', 
+                'departamento' => 'nullable|string', 
+                'ciudad' => 'nullable|string', 
+                'region' => 'nullable|integer', 
+            ]);
 
-    $payload = [
-        'nombre' => $data['nombre'],
-        'correo' => $data['correo'],
-  
-        'contrasena' => Hash::make($data['contrasena']), 
+            $payload = [
+                'nombre' => $data['nombre'],
+                'correo' => $data['correo'],
+                'contrasena' => Hash::make($data['contrasena']), 
+                'telefono' => $data['telefono'] ?? null,
+                'departamento' => $data['departamento'] ?? null,
+                'ciudad' => $data['ciudad'] ?? null,
+                'region' => $data['region'] ?? null, 
+            ];
 
-        'telefono' => $data['telefono'] ?? null,
-        'departamento' => $data['departamento'] ?? null,
-        'ciudad' => $data['ciudad'] ?? null,
-        'region' => $data['region'] ?? null, 
-    ];
-
-   
-    $user = $this->service->save($payload);
-
-    
-    $token = $user->createToken('api-token')->plainTextToken;
-
-    
-    $user->makeHidden(['contrasena']);
-
-    return response()->json([
-        'user' => $user,
-        'usuarioId' => $user->usuario_id,
-        'token' => $token
-    ], 201);
-}
+            $user = $this->service->save($payload);
+            $token = $user->createToken('api-token')->plainTextToken;
+            $user->makeHidden(['contrasena']);
+            return response()->json([
+                'user' => $user,
+                'usuarioId' => $user->usuario_id,
+                'token' => $token
+            ], 201);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function login(Request $request)
     {

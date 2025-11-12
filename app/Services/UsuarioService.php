@@ -26,18 +26,26 @@ class UsuarioService
 
     protected function normalizeUserPayload(array $data): array
     {
-        
+        // Asignar nombre de región según el valor
+        if (isset($data['region'])) {
+            switch ($data['region']) {
+                case 0:
+                    $data['region'] = 'Santa Ana Norte';
+                    break;
+                case 1:
+                    $data['region'] = 'Santa Ana Sur';
+                    break;
+                case 2:
+                    $data['region'] = 'Santa Ana Este';
+                    break;
+                case 3:
+                    $data['region'] = 'Santa Ana Oeste';
+                    break;
+            }
+        }
         if (isset($data['contrasena'])) {
             $data['contraseña'] = $data['contrasena'];
             unset($data['password']);
-        }
-        if (isset($data['correo'])) {
-            $data['correo'] = $data['correo'];
-            unset($data['correo']);
-        }
-        if (isset($data['nombre'])) {
-            $data['nombre'] = $data['nombre'];
-            unset($data['nombre']);
         }
         return $data;
     }
@@ -46,6 +54,7 @@ class UsuarioService
     {
         $data = $this->normalizeUserPayload($data);
 
+        error_log('Datos antes de guardar: ' . json_encode($data));
         if (isset($data['contrasena'])) {
             $pw = $data['contrasena'];
             if (!Str::startsWith($pw, ['$2y$', '$2a$', '$2b$'])) {

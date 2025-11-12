@@ -15,7 +15,8 @@ return new class extends Migration
                 $table->string('titulo');
                 $table->text('descripcion')->nullable();
                 $table->string('nivel')->default('Verde');
-                $table->foreignId('usuario_id')->constrained('Usuarios', 'usuario_id')->onDelete('cascade');
+                $table->unsignedBigInteger('usuario_id');
+                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
 
             });
         }

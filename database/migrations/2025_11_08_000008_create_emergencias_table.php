@@ -11,7 +11,8 @@ return new class extends Migration
         if (! Schema::hasTable('emergencias')) {
             Schema::create('emergencias', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('usuario_id')->constrained('Usuarios', 'usuario_id')->onDelete('cascade');
+                $table->unsignedBigInteger('usuario_id');
+                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
                 $table->text('mensaje');
                 $table->double('latitud', 10, 6)->nullable();
                 $table->double('longitud', 10, 6)->nullable();

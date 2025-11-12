@@ -13,7 +13,8 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('reporte_id')->constrained('reportes')->onDelete('cascade');
                 // reference Usuarios table
-                $table->foreignId('usuario_id')->constrained('Usuarios', 'usuario_id')->onDelete('cascade');
+                $table->unsignedBigInteger('usuario_id');
+                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
                 $table->text('mensaje');
 
             });

@@ -15,8 +15,6 @@ class UsuarioController extends Controller
     public function __construct(UsuarioService $service)
     {
         $this->service = $service;
-       
-        $this->middleware('auth:sanctum')->only(['logout','updateRol']);
     }
 
 
@@ -53,12 +51,10 @@ class UsuarioController extends Controller
             ];
 
             $user = $this->service->save($payload);
-            $token = $user->createToken('api-token')->plainTextToken;
             $user->makeHidden(['contrasena']);
             return response()->json([
                 'user' => $user,
-                'usuarioId' => $user->usuario_id,
-                'token' => $token
+                'usuarioId' => $user->usuario_id
             ], 201);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -81,25 +77,19 @@ class UsuarioController extends Controller
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
-
         $user->makeHidden(['contrasena']);
 
         return response()->json([
             'user' => $user,
             'usuarioId' => $user->usuario_id,
-            'rol' => $user->rol,
-            'token' => $token
+            'rol' => $user->rol
         ], 200);
     }
 
     public function logout(Request $request)
     {
-        $user = $request->user();
-        if ($user && $request->user()->currentAccessToken()) {
-            $request->user()->currentAccessToken()->delete();
-        }
-        return response()->json(null, 204);
+        // Sin tokens de Sanctum, simplemente retornamos éxito
+        return response()->json(['message' => 'Logout exitoso'], 200);
     }
 
     public function updateRol(Request $request, $id)

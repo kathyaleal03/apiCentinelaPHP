@@ -11,9 +11,9 @@ return new class extends Migration
         if (! Schema::hasTable('reportes')) {
             Schema::create('reportes', function (Blueprint $table) {
                 $table->bigIncrements('reporte_id');
-                // reference Usuarios table with custom primary key
+                // reference usuarios table with custom primary key
                 $table->unsignedBigInteger('usuario_id');
-                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
+                $table->foreign('usuario_id')->references('usuario_id')->on('usuarios')->onDelete('cascade');
                 $table->string('tipo');
                 $table->text('descripcion')->nullable();
                 $table->double('latitud', 10, 6)->nullable();

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ComentarioController;
 use App\Http\Controllers\Api\EmergenciaController;
 use App\Http\Controllers\Api\UsuarioController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EstadisticasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,6 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
 Route::apiResource('/regiones', RegionController::class);
 Route::apiResource('/fotos', FotoReporteController::class);
 Route::apiResource('/reportes', ReporteController::class);
@@ -38,21 +34,39 @@ Route::apiResource('/alertas', AlertaController::class);
 
 
 Route::apiResource('/comentarios', ComentarioController::class);
-// Estadísticas
-Route::get('/estadisticas/tipos', [\App\Http\Controllers\EstadisticasController::class, 'tipos']);
-Route::get('/estadisticas/estados', [\App\Http\Controllers\EstadisticasController::class, 'estados']);
-Route::get('/estadisticas/regiones', [\App\Http\Controllers\EstadisticasController::class, 'regiones']);
-Route::get('/estadisticas/heatmap', [\App\Http\Controllers\EstadisticasController::class, 'heatmap']);
-Route::get('/estadisticas/niveles-alerta', [\App\Http\Controllers\EstadisticasController::class, 'nivelesAlerta']);
-Route::get('/estadisticas/emergencias-atendidas', [\App\Http\Controllers\EstadisticasController::class, 'emergenciasAtendidas']);
+
+// Estadísticas de Reportes
+Route::prefix('/reportes/estadisticas')->group(function () {
+    Route::get('/tipos', [EstadisticasController::class, 'tipos']);
+    Route::get('/estados', [EstadisticasController::class, 'estados']);
+    Route::get('/regiones', [EstadisticasController::class, 'regiones']);
+    Route::get('/heatmap', [EstadisticasController::class, 'heatmap']);
+});
+
+// Estadísticas de Alertas
+Route::prefix('/estadisticas/alertas')->group(function () {
+    Route::get('/niveles', [EstadisticasController::class, 'nivelesAlerta']);
+    Route::get('/regiones', [EstadisticasController::class, 'alertasPorRegion']);
+});
+
+// Estadísticas de Emergencias
+Route::prefix('/estadisticas/emergencias')->group(function () {
+    Route::get('/atendidos', [EstadisticasController::class, 'emergenciasAtendidas']);
+});
+
+// Estadísticas generales (opcional, para mantener compatibilidad)
+Route::prefix('/estadisticas')->group(function () {
+    Route::get('/dashboard', [EstadisticasController::class, 'dashboard']);
+});
+
 Route::apiResource('/emergencias', EmergenciaController::class);
 
 // User auth routes
 Route::prefix('/usuarios')->group(function () {
     Route::post('/createUser', [UsuarioController::class, 'register']);
     Route::post('/login', [UsuarioController::class, 'login']);
-    Route::post('/logout', [UsuarioController::class, 'logout'])->middleware('auth:sanctum');
-    Route::put('/rol/{id}', [UsuarioController::class, 'updateRol'])->middleware('auth:sanctum');
+    Route::post('/logout', [UsuarioController::class, 'logout']);
+    Route::put('/rol/{id}', [UsuarioController::class, 'updateRol']);
 });
 
 // Resource routes for usuarios (index, show, update, destroy)

@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
-class Usuario extends Authenticatable
+class Usuario extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     public $timestamps = false;
-    protected $table = 'Usuarios';
+    protected $table = 'usuarios';
     protected $primaryKey = 'usuario_id';
     public $incrementing = true;
     protected $keyType = 'int';
@@ -30,14 +30,5 @@ class Usuario extends Authenticatable
 
     protected $hidden = [
         'contrasena',
-        'remember_token',
     ];
-
-    // Laravel expects getAuthPassword to return the password field name
-    public function getAuthPassword()
-    {
-        return $this->contrasena;
-    }
-
-    // convenience: map moment-like fields if needed
 }

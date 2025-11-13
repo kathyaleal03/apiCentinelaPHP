@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->text('descripcion')->nullable();
                 $table->string('nivel')->default('Verde');
                 $table->unsignedBigInteger('id_usuario');
-                $table->foreign('id_usuario')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
+                $table->foreign('id_usuario')->references('usuario_id')->on('usuarios')->onDelete('cascade');
 
             });
         }

@@ -12,7 +12,7 @@ return new class extends Migration
             Schema::create('emergencias', function (Blueprint $table) {
                 $table->bigIncrements('emergencia_id');
                 $table->unsignedBigInteger('usuario_id');
-                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
+                $table->foreign('usuario_id')->references('usuario_id')->on('usuarios')->onDelete('cascade');
                 $table->text('mensaje');
                 $table->double('latitud', 10, 6)->nullable();
                 $table->double('longitud', 10, 6)->nullable();

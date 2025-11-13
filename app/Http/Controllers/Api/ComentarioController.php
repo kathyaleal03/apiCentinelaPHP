@@ -34,7 +34,7 @@ class ComentarioController extends Controller
        
         $data = $request->validate([
             'reporte.reporteId' => 'required|exists:reportes,reporte_id',
-            'usuario.usuarioId' => 'required|exists:Usuarios,usuario_id',
+            'usuario.usuarioId' => 'required|exists:usuarios,usuario_id',
             'mensaje' => 'required|string',
         ]);
 

@@ -33,7 +33,7 @@ class EmergenciaController extends Controller
     {
         
         $data = $request->validate([
-            'usuario.usuarioId' => 'required|exists:Usuarios,usuario_id', 
+            'usuario.usuarioId' => 'required|exists:usuarios,usuario_id', 
             'mensaje' => 'required|string',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',

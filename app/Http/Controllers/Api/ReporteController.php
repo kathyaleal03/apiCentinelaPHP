@@ -13,7 +13,6 @@ class ReporteController extends Controller
     public function __construct(ReporteService $reporteService)
     {
         $this->reporteService = $reporteService;
-        $this->middleware('auth:sanctum')->only(['store','update','destroy']);
     }
 
     public function index()
@@ -50,7 +49,7 @@ class ReporteController extends Controller
 
             // Validación
             $validated = $request->validate([
-                'usuario_id' => 'required|exists:Usuarios,usuario_id',
+                'usuario_id' => 'required|exists:usuarios,usuario_id',
                 'tipo' => 'required|string',
                 'descripcion' => 'nullable|string',
                 'latitud' => 'required|numeric',

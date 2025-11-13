@@ -13,9 +13,9 @@ return new class extends Migration
                 $table->bigIncrements('comentario_id');
                 $table->unsignedBigInteger('reporte_id');
                 $table->foreign('reporte_id')->references('reporte_id')->on('reportes')->onDelete('cascade');
-                // reference Usuarios table
+                // reference usuarios table
                 $table->unsignedBigInteger('usuario_id');
-                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
+                $table->foreign('usuario_id')->references('usuario_id')->on('usuarios')->onDelete('cascade');
                 $table->text('mensaje');
                 $table->timestamp('fecha')->nullable();
 

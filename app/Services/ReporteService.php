@@ -57,7 +57,7 @@ class ReporteService
             'latitud' => $data['latitud'] ?? null,
             'longitud' => $data['longitud'] ?? null,
             'foto_id' => $data['foto_id'] ?? null,
-            'estado' => $data['estado'] ?? 'Pendiente',
+            'estado' => $data['estado'] ?? 'Activo',
         ];
 
         $reporte = Reporte::create($payload);

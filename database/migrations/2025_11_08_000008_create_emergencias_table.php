@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('emergencias')) {
             Schema::create('emergencias', function (Blueprint $table) {
-                $table->id();
+                $table->bigIncrements('emergencia_id');
                 $table->unsignedBigInteger('usuario_id');
                 $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
                 $table->text('mensaje');

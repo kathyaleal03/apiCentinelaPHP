@@ -10,13 +10,14 @@ return new class extends Migration
     {
         if (! Schema::hasTable('alertas')) {
             Schema::create('alertas', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('region_id')->nullable()->constrained('regiones')->nullOnDelete();
+                $table->bigIncrements('alerta_id');
+                $table->unsignedBigInteger('region_id')->nullable();
+                $table->foreign('region_id')->references('region_id')->on('regiones')->nullOnDelete();
                 $table->string('titulo');
                 $table->text('descripcion')->nullable();
                 $table->string('nivel')->default('Verde');
-                $table->unsignedBigInteger('usuario_id');
-                $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
+                $table->unsignedBigInteger('id_usuario');
+                $table->foreign('id_usuario')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
 
             });
         }

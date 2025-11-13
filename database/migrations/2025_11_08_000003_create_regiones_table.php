@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('regiones')) {
             Schema::create('regiones', function (Blueprint $table) {
-                $table->id();
+                $table->bigIncrements('region_id');
                 $table->string('nombre');
                 $table->text('descripcion')->nullable();
                 $table->double('latitud', 10, 6)->nullable();

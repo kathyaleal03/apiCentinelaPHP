@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('fotosreportes')) {
             Schema::create('fotosreportes', function (Blueprint $table) {
-                $table->id();
+                $table->bigIncrements('foto_id');
                 $table->string('url_foto');
 
             });

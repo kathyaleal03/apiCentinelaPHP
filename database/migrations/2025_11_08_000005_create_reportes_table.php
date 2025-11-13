@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('reportes')) {
             Schema::create('reportes', function (Blueprint $table) {
-                $table->id();
+                $table->bigIncrements('reporte_id');
                 // reference Usuarios table with custom primary key
                 $table->unsignedBigInteger('usuario_id');
                 $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
@@ -18,7 +18,8 @@ return new class extends Migration
                 $table->text('descripcion')->nullable();
                 $table->double('latitud', 10, 6)->nullable();
                 $table->double('longitud', 10, 6)->nullable();
-                $table->foreignId('foto_id')->nullable()->constrained('fotosreportes');
+                $table->unsignedBigInteger('foto_id')->nullable();
+                $table->foreign('foto_id')->references('foto_id')->on('fotosreportes')->onDelete('set null');
                 $table->string('estado')->default('Activo');
 
             });

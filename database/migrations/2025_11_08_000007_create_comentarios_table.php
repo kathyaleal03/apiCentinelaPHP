@@ -10,12 +10,14 @@ return new class extends Migration
     {
         if (! Schema::hasTable('comentarios')) {
             Schema::create('comentarios', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('reporte_id')->constrained('reportes')->onDelete('cascade');
+                $table->bigIncrements('comentario_id');
+                $table->unsignedBigInteger('reporte_id');
+                $table->foreign('reporte_id')->references('reporte_id')->on('reportes')->onDelete('cascade');
                 // reference Usuarios table
                 $table->unsignedBigInteger('usuario_id');
                 $table->foreign('usuario_id')->references('usuario_id')->on('Usuarios')->onDelete('cascade');
                 $table->text('mensaje');
+                $table->timestamp('fecha')->nullable();
 
             });
         }

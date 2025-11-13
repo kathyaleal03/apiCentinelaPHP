@@ -18,7 +18,16 @@ class FotoReporteService
 
     public function save(array $data)
     {
-        return FotoReporte::create($data);
+        \Log::info('FotoReporteService - Intentando guardar foto con data: ' . json_encode($data));
+        
+        $foto = FotoReporte::create($data);
+        
+        \Log::info('FotoReporteService - Foto guardada exitosamente', [
+            'foto_id' => $foto->foto_id,
+            'url_foto' => $foto->url_foto
+        ]);
+        
+        return $foto;
     }
 
     public function deleteById($id)

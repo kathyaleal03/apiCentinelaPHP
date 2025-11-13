@@ -81,6 +81,8 @@ class ReporteService
 
         // Obtener URL de foto (acepta múltiples formatos)
         $fotoUrl = $data['fotoUrl'] ?? $data['foto_url'] ?? null;
+        
+        Log::info('ReporteService - fotoUrl recibida: ' . ($fotoUrl ?? 'NULL'));
 
         $payload = [
             'usuario_id' => $usuarioId,
@@ -89,21 +91,29 @@ class ReporteService
             'latitud' => $data['latitud'] ?? null,
             'longitud' => $data['longitud'] ?? null,
             'estado' => $data['estado'] ?? 'Activo',
+            'foto_id' => null, // Inicializar
         ];
 
         // Crear foto si existe URL
         if ($fotoUrl) {
             try {
+                Log::info('ReporteService - Creando foto con url: ' . $fotoUrl);
                 $f = $this->fotoService->save(['url_foto' => $fotoUrl]);
                 $payload['foto_id'] = $f->getKey();
-                Log::info('Foto creada', ['foto_id' => $f->getKey()]);
+                Log::info('ReporteService - Foto creada exitosamente', ['foto_id' => $f->getKey()]);
             } catch (\Exception $e) {
-                Log::error('Error creando foto: ' . $e->getMessage());
+                Log::error('ReporteService - Error creando foto: ' . $e->getMessage());
                 // Continuar sin foto
             }
+        } else {
+            Log::info('ReporteService - No se proporcionó URL de foto, continuando sin foto');
         }
 
-        return $this->save($payload);
+        // Crear reporte directamente con el payload (no llamar a save() de nuevo)
+        $reporte = Reporte::create($payload);
+        Log::info('ReporteService - Reporte creado', ['reporte_id' => $reporte->reporte_id, 'foto_id' => $reporte->foto_id]);
+        
+        return $reporte;
     }
 
     public function deleteById($id)

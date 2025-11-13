@@ -58,6 +58,7 @@ class ReporteService
             'longitud' => $data['longitud'] ?? null,
             'foto_id' => $data['foto_id'] ?? null,
             'estado' => $data['estado'] ?? 'Activo',
+            'fecha_hora' => now(),
         ];
 
         $reporte = Reporte::create($payload);
@@ -92,6 +93,7 @@ class ReporteService
             'longitud' => $data['longitud'] ?? null,
             'estado' => $data['estado'] ?? 'Activo',
             'foto_id' => null, // Inicializar
+            'fecha_hora' => now(),
         ];
 
         // Crear foto si existe URL

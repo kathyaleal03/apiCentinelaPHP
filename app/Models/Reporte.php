@@ -12,6 +12,7 @@ class Reporte extends Model
     use HasFactory;
 
     protected $table = 'reportes';
+    protected $primaryKey = 'reporte_id';
     public $timestamps = false;
 
     protected $fillable = [
@@ -22,6 +23,12 @@ class Reporte extends Model
         'longitud',
         'foto_id',
         'estado',
+        'fecha_hora',
+    ];
+
+    protected $casts = [
+        'latitud' => 'float',
+        'longitud' => 'float',
     ];
 
     public function usuario()

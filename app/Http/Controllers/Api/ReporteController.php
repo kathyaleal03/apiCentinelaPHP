@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reporte;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\ReporteService;
 
@@ -17,7 +18,11 @@ class ReporteController extends Controller
 
     public function index()
     {
-        $reportes = Reporte::with(['usuario', 'foto'])->get();
+       
+        $today = Carbon::today()->toDateString();
+        $reportes = Reporte::with(['usuario', 'foto'])
+            ->whereDate('fecha_hora', $today)
+            ->get();
         $reportes->transform(function ($reporte) {
             $reporte->fotoUrl = $reporte->foto ? $reporte->foto->url_foto : null;
             return $reporte;
@@ -35,10 +40,10 @@ class ReporteController extends Controller
     public function store(Request $request)
     {
         try {
-            // 🔥 Normalizar datos antes de validar
+          
             $data = $request->all();
             
-            // Extraer usuario_id de diferentes formatos
+            
             if (!isset($data['usuario_id'])) {
                 if (isset($data['usuarioId'])) {
                     $data['usuario_id'] = $data['usuarioId'];
@@ -51,10 +56,10 @@ class ReporteController extends Controller
                 }
             }
 
-            // Merge datos normalizados
+          
             $request->merge($data);
 
-            // Validación
+          
             $validated = $request->validate([
                 'usuario_id' => 'required|exists:usuarios,usuario_id',
                 'tipo' => 'required|string',
@@ -66,10 +71,10 @@ class ReporteController extends Controller
                 'estado' => 'nullable|string',
             ]);
 
-            // Crear reporte
+    
             $reporte = $this->reporteService->createFromRequest($request);
             
-            // Cargar relaciones
+       
             $reporte->load(['usuario', 'foto']);
 
             return response()->json($reporte, 201);

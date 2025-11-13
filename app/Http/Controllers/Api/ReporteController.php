@@ -17,12 +17,19 @@ class ReporteController extends Controller
 
     public function index()
     {
-        return Reporte::with(['usuario', 'foto'])->get();
+        $reportes = Reporte::with(['usuario', 'foto'])->get();
+        $reportes->transform(function ($reporte) {
+            $reporte->fotoUrl = $reporte->foto ? $reporte->foto->url_foto : null;
+            return $reporte;
+        });
+        return response()->json($reportes);
     }
 
     public function show(Reporte $reporte)
     {
-        return $reporte->load(['usuario', 'foto']);
+        $reporte->load(['usuario', 'foto']);
+        $reporte->fotoUrl = $reporte->foto ? $reporte->foto->url_foto : null;
+        return response()->json($reporte);
     }
 
     public function store(Request $request)

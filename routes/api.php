@@ -54,7 +54,7 @@ Route::prefix('/estadisticas/emergencias')->group(function () {
     Route::get('/atendidos', [EstadisticasController::class, 'emergenciasAtendidas']);
 });
 
-// Estadísticas generales (opcional, para mantener compatibilidad)
+// Estadísticas generales 
 Route::prefix('/estadisticas')->group(function () {
     Route::get('/dashboard', [EstadisticasController::class, 'dashboard']);
 });
@@ -69,6 +69,5 @@ Route::prefix('/usuarios')->group(function () {
     Route::put('/rol/{id}', [UsuarioController::class, 'updateRol']);
 });
 
-// Resource routes for usuarios (index, show, update, destroy)
-// `store` is handled by POST /api/usuarios/register to keep the Java-style payload naming
+
 Route::apiResource('/usuarios', UsuarioController::class)->except(['store', 'create', 'edit']);

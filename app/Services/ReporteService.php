@@ -39,7 +39,7 @@ class ReporteService
             throw new \InvalidArgumentException('Usuario no encontrado: ' . $data['usuario_id']);
         }
 
-        // Manejar foto si existe
+        
         if (!empty($data['foto']) && is_array($data['foto'])) {
             $foto = $data['foto'];
             if (empty($foto['fotoId']) && !empty($foto['url_foto'])) {
@@ -70,17 +70,17 @@ class ReporteService
 
     public function createFromRequest(Request $request)
     {
-        // 🔥 Extraer todos los campos posibles
+        
         $data = $request->all();
 
-        // Obtener usuario_id (ya normalizado en el controller)
+        
         $usuarioId = $data['usuario_id'] ?? null;
 
         if (!$usuarioId) {
             throw new \InvalidArgumentException('No se pudo determinar el usuario_id');
         }
 
-        // Obtener URL de foto (acepta múltiples formatos)
+        
         $fotoUrl = $data['fotoUrl'] ?? $data['foto_url'] ?? null;
         
         Log::info('ReporteService - fotoUrl recibida: ' . ($fotoUrl ?? 'NULL'));
@@ -92,11 +92,11 @@ class ReporteService
             'latitud' => $data['latitud'] ?? null,
             'longitud' => $data['longitud'] ?? null,
             'estado' => $data['estado'] ?? 'Activo',
-            'foto_id' => null, // Inicializar
+            'foto_id' => null, 
             'fecha_hora' => now(),
         ];
 
-        // Crear foto si existe URL
+        
         if ($fotoUrl) {
             try {
                 Log::info('ReporteService - Creando foto con url: ' . $fotoUrl);
@@ -105,13 +105,13 @@ class ReporteService
                 Log::info('ReporteService - Foto creada exitosamente', ['foto_id' => $f->getKey()]);
             } catch (\Exception $e) {
                 Log::error('ReporteService - Error creando foto: ' . $e->getMessage());
-                // Continuar sin foto
+                
             }
         } else {
             Log::info('ReporteService - No se proporcionó URL de foto, continuando sin foto');
         }
 
-        // Crear reporte directamente con el payload (no llamar a save() de nuevo)
+        
         $reporte = Reporte::create($payload);
         Log::info('ReporteService - Reporte creado', ['reporte_id' => $reporte->reporte_id, 'foto_id' => $reporte->foto_id]);
         
@@ -130,7 +130,7 @@ class ReporteService
             throw new \InvalidArgumentException('Reporte no encontrado');
         }
 
-        // Actualizar usuario si se proporciona
+        
         if (isset($data['usuario_id']) || isset($data['user_id'])) {
             $uid = $data['usuario_id'] ?? $data['user_id'];
             $u = Usuario::find($uid);
@@ -139,7 +139,7 @@ class ReporteService
             }
         }
 
-        // Actualizar foto si se proporciona
+        
         if (isset($data['foto']) && is_array($data['foto'])) {
             $foto = $data['foto'];
             if (isset($foto['fotoId'])) {
@@ -147,7 +147,6 @@ class ReporteService
             }
         }
 
-        // Actualizar campos básicos
         $r->descripcion = $data['descripcion'] ?? $r->descripcion;
         $r->latitud = $data['latitud'] ?? $r->latitud;
         $r->longitud = $data['longitud'] ?? $r->longitud;

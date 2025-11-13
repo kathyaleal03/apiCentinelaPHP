@@ -88,7 +88,7 @@ class UsuarioController extends Controller
 
     public function logout(Request $request)
     {
-        // Sin tokens de Sanctum, simplemente retornamos éxito
+        
         return response()->json(['message' => 'Logout exitoso'], 200);
     }
 

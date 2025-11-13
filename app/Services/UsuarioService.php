@@ -26,7 +26,7 @@ class UsuarioService
 
     protected function normalizeUserPayload(array $data): array
     {
-        // Asignar nombre de región según el valor
+        
         if (isset($data['region'])) {
             switch ($data['region']) {
                 case 0:

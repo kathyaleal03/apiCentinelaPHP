@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\NivelAlerta; // Importamos el Enum
+use App\Enums\NivelAlerta; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -3,9 +3,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reporte;
+use App\Models\Comentario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\ReporteService;
+use Illuminate\Support\Facades\DB;
 
 class ReporteController extends Controller
 {
@@ -20,14 +22,48 @@ class ReporteController extends Controller
     {
        
         $today = Carbon::today()->toDateString();
+        
         $reportes = Reporte::with(['usuario', 'foto'])
             ->whereDate('fecha_hora', $today)
             ->get();
-        $reportes->transform(function ($reporte) {
+
+        if ($reportes->isEmpty()) {
+            return response()->json($reportes);
+        }
+
+       
+        $ids = $reportes->pluck('reporte_id')->all();
+        $counts = Comentario::select('reporte_id', DB::raw('count(*) as total'))
+            ->whereIn('reporte_id', $ids)
+            ->groupBy('reporte_id')
+            ->get()
+            ->pluck('total', 'reporte_id')
+            ->toArray();
+
+        $minVisibleTime = Carbon::now()->subMinutes(3);
+
+        
+        $visible = $reportes->filter(function ($r) use ($counts, $minVisibleTime) {
+            $hasComments = isset($counts[$r->reporte_id]) && $counts[$r->reporte_id] > 0;
+            if ($hasComments) return true;
+
+            if (empty($r->fecha_hora)) return false;
+            try {
+                $created = Carbon::parse($r->fecha_hora);
+                return $created->greaterThanOrEqualTo($minVisibleTime);
+            } catch (\Exception $e) {
+                return false;
+            }
+        })->values();
+
+        
+        $visible->transform(function ($reporte) use ($counts) {
             $reporte->fotoUrl = $reporte->foto ? $reporte->foto->url_foto : null;
+            $reporte->comentariosCount = $counts[$reporte->reporte_id] ?? 0;
             return $reporte;
         });
-        return response()->json($reportes);
+
+        return response()->json($visible);
     }
 
     public function show(Reporte $reporte)

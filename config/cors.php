@@ -9,7 +9,8 @@ return [
 
     'allowed_origins' => [
         'http://localhost:5173', 
-        'https://centinela-frontend.vercel.app', 
+        'https://centinela-frontend.vercel.app',
+        '*', 
     ], 
 
     'allowed_origins_patterns' => [],

@@ -106,4 +106,27 @@ class UsuarioController extends Controller
 
         return response()->json(['message' => 'Rol actualizado', 'usuarioId' => $u->id, 'nuevoRol' => $u->rol], 200);
     }
+
+    public function changePassword(Request $request, $id)
+    {
+        $user = Usuario::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $data = $request->validate([
+            'nuevaContrasena' => 'required|string|min:6',
+            'confirmarContrasena' => 'required|string|same:nuevaContrasena',
+        ]);
+
+        $updated = $this->service->update($user->getKey(), [
+            'contrasena' => $data['nuevaContrasena'],
+        ]);
+
+        if (!$updated) {
+            return response()->json(['message' => 'No se pudo actualizar la contraseña'], 500);
+        }
+
+        return response()->json(['message' => 'Contraseña actualizada correctamente'], 200);
+    }
 }

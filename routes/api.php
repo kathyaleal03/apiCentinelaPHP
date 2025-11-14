@@ -67,6 +67,7 @@ Route::prefix('/usuarios')->group(function () {
     Route::post('/login', [UsuarioController::class, 'login']);
     Route::post('/logout', [UsuarioController::class, 'logout']);
     Route::put('/rol/{id}', [UsuarioController::class, 'updateRol']);
+    Route::post('/{id}/cambiar-contrasena', [UsuarioController::class, 'changePassword']);
 });
 
 
